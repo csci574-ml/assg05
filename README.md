@@ -1,5 +1,5 @@
 ---
-title: 'Assignment 04: Support Vector Machines'
+title: 'Assignment 05: Ensemble Learning'
 author: 'CSci 574: Machine Learning'
 date: ''
 ---
