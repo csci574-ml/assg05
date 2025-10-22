@@ -20,10 +20,103 @@ jobs:
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
-    - name: Set pythonpath to get our assignment modules
+    - name: Set PYTHONPATH to see project modules
       run: |
          echo "PYTHONPATH=$GITHUB_WORKSPACE/src" >> $GITHUB_ENV
     - name: Install dependencies
       run: |
         conda env update --file environment.yml --name base
-    - uses: education/autograding@v1
+
+    - name: Show Python versions
+      id: show-python-versions
+      uses: etamu-class/autograding-command-grader@v10
+      with:
+        test-name: 'Show Python versions'
+        setup-command: ''
+        command: 'python src/python_versions.py'
+        timeout: '10'
+        max-score: '0'
+
+    - name: Test Assignment Notebook runs all cells cleanly
+      id: test-assignment-notebook
+      uses: etamu-class/autograding-command-grader@v10
+      with:
+        test-name: 'Test Assignment Notebook'
+        working-directory: './notebooks'
+        setup-command: ''
+        command: 'jupyter nbconvert --execute Assg-05-Support-Vector-Machines.ipynb --to notebook'
+        timeout: '10'
+        max-score: '20'
+
+    - name: Task 1.1 test task_1_1_load_data()
+      id: test-task-1-1
+      uses: etamu-class/autograding-command-grader@v10
+      with:
+        test-name: 'Test Task 1.1'
+        setup-command: ''
+        command: 'python -m twisted.trial test_assg_tasks.test_task_1_1_load_data'
+        timeout: '10'
+        max-score: '10'
+
+    - name: Task 1.2 test task_1_2_linear_svm_classifier()
+      id: test-task-1-2
+      uses: etamu-class/autograding-command-grader@v10
+      with:
+        test-name: 'Test Task 1.2'
+        setup-command: ''
+        command: 'python -m twisted.trial test_assg_tasks.test_task_1_2_linear_svm_classifier'
+        timeout: '10'
+        max-score: '10'
+
+    - name: Task 1.3 test task_1_3_linear_svm_classifier()
+      id: test-task-1-3
+      uses: etamu-class/autograding-command-grader@v10
+      with:
+        test-name: 'Test Task 1.3'
+        setup-command: ''
+        command: 'python -m twisted.trial test_assg_tasks.test_task_1_3_linear_svm_classifier'
+        timeout: '10'
+        max-score: '10'
+
+    - name: Task 2.1 test task_2_1_gaussian_kernel()
+      id: test-task-2-1
+      uses: etamu-class/autograding-command-grader@v10
+      with:
+        test-name: 'Test Task 2.1'
+        setup-command: ''
+        command: 'python -m twisted.trial test_assg_tasks.test_task_2_1_gaussian_kernel'
+        timeout: '10'
+        max-score: '10'
+
+    - name: Task 3.1 test task_3_1_load_data()
+      id: test-task-3-1
+      uses: etamu-class/autograding-command-grader@v10
+      with:
+        test-name: 'Test Task 3.1'
+        setup-command: ''
+        command: 'python -m twisted.trial test_assg_tasks.test_task_3_1_load_data'
+        timeout: '10'
+        max-score: '10'
+
+    - name: Task 3.2 test task_3_2_rbf_svm_classifier()
+      id: test-task-3-2
+      uses: etamu-class/autograding-command-grader@v10
+      with:
+        test-name: 'Test Task 3.2'
+        setup-command: ''
+        command: 'python -m twisted.trial test_assg_tasks.test_task_3_2_rbf_svm_classifier'
+        timeout: '10'
+        max-score: '10'
+
+    - name: Autograding Reporter
+      uses: education/autograding-grading-reporter@v1
+      env:
+        TEST-ASSIGNMENT-NOTEBOOK_RESULTS: "${{steps.test-assignment-notebook.outputs.result}}"
+        TEST-TASK-1-1_RESULTS: "${{steps.test-task-1-1.outputs.result}}"
+        TEST-TASK-1-2_RESULTS: "${{steps.test-task-1-2.outputs.result}}"
+        TEST-TASK-1-3_RESULTS: "${{steps.test-task-1-3.outputs.result}}"
+        TEST-TASK-2-1_RESULTS: "${{steps.test-task-2-1.outputs.result}}"
+        TEST-TASK-3-1_RESULTS: "${{steps.test-task-3-1.outputs.result}}"
+        TEST-TASK-3-2_RESULTS: "${{steps.test-task-3-2.outputs.result}}"
+      with:
+        runners: test-assignment-notebook,test-task-1-1,test-task-1-2,test-task-1-3,test-task-2-1,test-task-3-1,test-task-3-2
